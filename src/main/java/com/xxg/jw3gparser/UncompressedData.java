@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jws.soap.SOAPBinding.ParameterStyle;
+
 public class UncompressedData {
 
 	/**
@@ -244,10 +246,33 @@ public class UncompressedData {
 				playerList.add(player);
 			}
 			player.setComputer(isComputer);
-			player.setAiStrength(aiStrength);
-			player.setColor(color);
+			player.setAiStrength(PlayAiStrength.values()[aiStrength]);
+			if(color < 12) {
+				player.setColor(PlayerColor.values()[color]);
+			}
 			player.setHandicap(handicap);
-			player.setRace(race);
+			switch(race) {
+				case 0x01:
+				case 0x41:
+					player.setRace(PlayerRace.HUMAN);
+					break;
+				case 0x02:
+				case 0x42:
+					player.setRace(PlayerRace.ORC);
+					break;
+				case 0x04:
+				case 0x44:
+					player.setRace(PlayerRace.NIGHT_ELF);
+					break;
+				case 0x08:
+				case 0x48:
+					player.setRace(PlayerRace.UNDEAD);
+					break;
+				case 0x20:
+				case 0x60:
+					player.setRace(PlayerRace.RANDOM);
+					break;
+			}
 			player.setTeamNumber(team);
 			player.setSlotNumber(slotNumber);
 		}
