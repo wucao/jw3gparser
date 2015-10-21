@@ -157,8 +157,8 @@ public class Test {
 
 输出DEMO：
 
-
->版本：1.26.6059
+```
+版本：1.26.6059
 时长：24:53
 游戏名称：WCA01
 游戏创建者：A.1st_LawLiet
@@ -212,3 +212,4 @@ APM：0
 [0:38]checkuncle 对 所有人 说：gl
 [24:30]checkuncle 对 所有人 说：gg
 [24:43]checkuncle 对 所有人 说：For more replays, plz visit www.Replays.Net
+```
