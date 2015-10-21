@@ -213,3 +213,9 @@ APM：0
 [24:30]checkuncle 对 所有人 说：gg
 [24:43]checkuncle 对 所有人 说：For more replays, plz visit www.Replays.Net
 ```
+
+## 参考文档
+
+http://w3g.deepnode.de/files/w3g_format.txt
+
+http://w3g.deepnode.de/files/w3g_actions.txt
