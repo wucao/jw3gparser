@@ -88,7 +88,7 @@ public class ReplayData {
 
                 // 无效的Block
                 default:
-                    throw new W3GException("无效Block，ID:" + blockId);
+                    throw new W3GException("Unkown block id: " + blockId);
 			}
 		}
 	}
@@ -128,8 +128,9 @@ public class ReplayData {
 	
 	/**
 	*  解析一个时间块
+	 * @throws W3GException 
 	*/
-	private void analysisTimeSlot() {
+	private void analysisTimeSlot() throws W3GException {
 		
 		offset++;
 		
@@ -150,8 +151,9 @@ public class ReplayData {
 	/**
 	 * 解析TimeSlot中的Action
 	 * @param end TimeSlot的结束位置
+	 * @throws W3GException 
 	 */
-	private void analysisAction(int timeSlotEnd) {
+	private void analysisAction(int timeSlotEnd) throws W3GException {
 		
 		while(offset != timeSlotEnd) {
 			
@@ -332,6 +334,8 @@ public class ReplayData {
 					case 0x75:
 						offset += 2;
 						break;
+					default:
+						throw new W3GException("Unkown action id: " + actionId);
 				}
 				
 				lastActionWasDeselect = thisActionIsDeselect;
