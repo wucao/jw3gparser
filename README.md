@@ -1,5 +1,5 @@
 # jw3gparser
-Java解析《魔兽争霸3》游戏录像工具
+Java解析《魔兽争霸3》游戏录像工具，可解析w3g、nwg(网易对战平台录像)格式录像。
 
 ## 使用方法
 
@@ -213,3 +213,7 @@ APM：0
 http://w3g.deepnode.de/files/w3g_format.txt
 
 http://w3g.deepnode.de/files/w3g_actions.txt
+
+## Change Log
+### V1.1.0
+1. 支持网易对战平台录像格式nwg解析;
