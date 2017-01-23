@@ -63,6 +63,19 @@ public class Player {
 	*/
 	private int action;
 
+	/**
+	 * 是否有离开游戏的动作
+	 */
+	private boolean leaveGameAction;
+
+	public boolean getLeaveGameAction() {
+		return leaveGameAction;
+	}
+
+	public void setLeaveGameAction(boolean leaveGameAction) {
+		this.leaveGameAction = leaveGameAction;
+	}
+
 	public int getAction()
 	{
 		return action;

@@ -217,3 +217,6 @@ http://w3g.deepnode.de/files/w3g_actions.txt
 ## Change Log
 ### V1.1.0
 1. 支持网易对战平台录像格式nwg解析;
+
+### V1.1.1
+1. 修复部分录像没有玩家离开游戏标记的导致玩家游戏时间是0的BUG;

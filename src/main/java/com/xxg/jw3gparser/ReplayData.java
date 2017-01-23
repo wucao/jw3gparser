@@ -91,6 +91,12 @@ public class ReplayData {
                     throw new W3GException("Unkown block id: " + blockId);
 			}
 		}
+
+		for(Player player : playerList) {
+			if(!player.getLeaveGameAction()) {
+				player.setPlayTime(time);
+			}
+		}
 	}
 
 	/**
@@ -150,7 +156,7 @@ public class ReplayData {
 	
 	/**
 	 * 解析TimeSlot中的Action
-	 * @param end TimeSlot的结束位置
+	 * @param timeSlotEnd TimeSlot的结束位置
 	 * @throws W3GException 
 	 */
 	private void analysisAction(int timeSlotEnd) throws W3GException {
@@ -356,6 +362,7 @@ public class ReplayData {
 		byte playerId = uncompressedDataBytes[offset];
 		Player player = getPlayById(playerId);
 		player.setPlayTime(time);
+		player.setLeaveGameAction(true);
 		offset += 9;
 		
 	}
