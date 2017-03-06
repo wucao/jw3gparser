@@ -11,56 +11,39 @@ public class Replay {
 	private UncompressedData uncompressedData;
 
 	public Replay(File w3gFile) throws IOException, W3GException, DataFormatException {
+		// 将文件转为字节数组，方便处理
+		byte[] fileBytes = fileToByteArray(w3gFile);
 
-        FileType fileType = FileType.W3G;
+		// 找到Header起始位置(主要是兼容网易对战平台nwg格式录像)
+		String fileHex = HexUtil.encodeHexString(fileBytes);
+		String seqHex = HexUtil.encodeHexString(Header.BEGIN_TITLE.getBytes("UTF-8"));
+		int index = fileHex.indexOf(seqHex) / 2;
+		fileBytes = Arrays.copyOfRange(fileBytes, index, fileBytes.length);
 
-		String fileName = w3gFile.getName();
-		int index = fileName.lastIndexOf(".");
-		if(index >= 0) {
-			String suffix = fileName.substring(index + 1);
-			if(suffix.toLowerCase().equals("nwg")) {
-                fileType = FileType.NWG;
-            }
+		// 解析Header
+		header = new Header(fileBytes);
+
+		// 遍历解析每个压缩数据块，解压缩，合并
+		long compressedDataBlockCount = header.getCompressedDataBlockCount();
+		byte[] uncompressedDataBytes = new byte[0]; // 所有压缩数据块中数据解压合并到这个数组中
+		int offset = 68;
+		for(int i = 0; i < compressedDataBlockCount; i++) {
+			CompressedDataBlock compressedDataBlock = new CompressedDataBlock(fileBytes, offset);
+
+			// 数组合并
+			byte[] blockUncompressedData = compressedDataBlock.getUncompressedDataBytes();
+			byte[] temp = new byte[uncompressedDataBytes.length + blockUncompressedData.length];
+			System.arraycopy(uncompressedDataBytes, 0, temp, 0, uncompressedDataBytes.length);
+			System.arraycopy(blockUncompressedData, 0, temp, uncompressedDataBytes.length, blockUncompressedData.length);
+			uncompressedDataBytes = temp;
+
+			int blockCompressedDataSize = compressedDataBlock.getCompressedDataSize();
+			offset += 8 + blockCompressedDataSize;
 		}
-        parse(w3gFile, fileType);
+
+		// 处理解压缩后的字节数组
+		uncompressedData = new UncompressedData(uncompressedDataBytes);
 	}
-		
-	public Replay(File w3gFile, FileType fileType) throws IOException, W3GException, DataFormatException {
-        parse(w3gFile, fileType);
-	}
-
-    private void parse(File w3gFile, FileType fileType) throws IOException, W3GException, DataFormatException {
-        // 将文件转为字节数组，方便处理
-        byte[] fileBytes = fileToByteArray(w3gFile);
-        if(fileType == FileType.NWG) {
-            fileBytes = Arrays.copyOfRange(fileBytes, 190463, fileBytes.length);
-        }
-
-
-        // 解析Header
-        header = new Header(fileBytes);
-
-        // 遍历解析每个压缩数据块，解压缩，合并
-        long compressedDataBlockCount = header.getCompressedDataBlockCount();
-        byte[] uncompressedDataBytes = new byte[0]; // 所有压缩数据块中数据解压合并到这个数组中
-        int offset = 68;
-        for(int i = 0; i < compressedDataBlockCount; i++) {
-            CompressedDataBlock compressedDataBlock = new CompressedDataBlock(fileBytes, offset);
-
-            // 数组合并
-            byte[] blockUncompressedData = compressedDataBlock.getUncompressedDataBytes();
-            byte[] temp = new byte[uncompressedDataBytes.length + blockUncompressedData.length];
-            System.arraycopy(uncompressedDataBytes, 0, temp, 0, uncompressedDataBytes.length);
-            System.arraycopy(blockUncompressedData, 0, temp, uncompressedDataBytes.length, blockUncompressedData.length);
-            uncompressedDataBytes = temp;
-
-            int blockCompressedDataSize = compressedDataBlock.getCompressedDataSize();
-            offset += 8 + blockCompressedDataSize;
-        }
-
-        // 处理解压缩后的字节数组
-        uncompressedData = new UncompressedData(uncompressedDataBytes);
-    }
 
 	/**
 	 * 将文件转换成字节数组
