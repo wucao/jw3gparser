@@ -27,17 +27,11 @@ public class Header {
 	private long duration;
 
 	public Header(byte[] fileBytes) throws W3GException {
-		
-		// 读取开头的字符串"Warcraft III recorded game\u001A\0"
-		String beginTitle = new String(fileBytes, 0, 28);
-		if (!BEGIN_TITLE.equals(beginTitle)) {
-			throw new W3GException("录像格式不正确。");
-		}
 
 		// header部分总大小（版本小于或等于V1.06是0x40(64)，版本大于或等于V1.07是0x44(68)）
 		headerSize = LittleEndianTool.getUnsignedInt32(fileBytes, 28);
 		if (headerSize != 0x44) {
-			throw new W3GException("不支持V1.06及以下版本的录像。");
+			throw new W3GException("The version is not supported");
 		}
 
 		// 压缩文件大小
@@ -46,7 +40,7 @@ public class Header {
 		// header版本（版本小于或等于V1.06是0，版本大于或等于V1.07是1）
 		headerVersion = LittleEndianTool.getUnsignedInt32(fileBytes, 36);
 		if (headerVersion != 1) {
-			throw new W3GException("不支持V1.06及以下版本的录像。");
+			throw new W3GException("The version is not supported");
 		}
 
 		// 解压缩数据大小
@@ -83,7 +77,7 @@ public class Header {
 
 		// 判断Header中后四位读取的CRC32的值和计算得到的值比较，看是否一致
 		if (crc32 != crc32Tool.getValue()) {
-			throw new W3GException("Header部分CRC32校验不通过。");
+			throw new W3GException("Invalid replay");
 		}
 	}
 

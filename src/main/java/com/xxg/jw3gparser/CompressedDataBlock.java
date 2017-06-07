@@ -31,7 +31,7 @@ public class CompressedDataBlock {
 		inflater.setInput(fileBytes, offset + 8, compressedDataSize);
 		int realUncompressedDataSize = inflater.inflate(uncompressedDataBytes);
 		if(realUncompressedDataSize != uncompressedDataSize) {
-			throw new W3GException("解压缩数据异常");
+			throw new W3GException("Uncompressed data error");
 		}
 
 	}

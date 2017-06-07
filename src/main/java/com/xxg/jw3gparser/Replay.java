@@ -11,13 +11,18 @@ public class Replay {
 	private UncompressedData uncompressedData;
 
 	public Replay(File w3gFile) throws IOException, W3GException, DataFormatException {
+
 		// 将文件转为字节数组，方便处理
 		byte[] fileBytes = fileToByteArray(w3gFile);
 
 		// 找到Header起始位置(主要是兼容网易对战平台nwg格式录像)
-		String fileHex = HexUtil.encodeHexString(fileBytes);
-		String seqHex = HexUtil.encodeHexString(Header.BEGIN_TITLE.getBytes("UTF-8"));
-		int index = fileHex.indexOf(seqHex) / 2;
+		byte[] beginSequence = Header.BEGIN_TITLE.getBytes("UTF-8");
+
+		int index = indexOf(fileBytes, beginSequence);
+		if(index < 0) {
+			throw new W3GException("Cannot find header 'Warcraft III recorded game'");
+		}
+
 		fileBytes = Arrays.copyOfRange(fileBytes, index, fileBytes.length);
 
 		// 解析Header
@@ -68,6 +73,20 @@ public class Replay {
 		}
 		
 		return byteArrayOutputStream.toByteArray();
+	}
+
+	public int indexOf(byte[] outerArray, byte[] smallerArray) {
+		for(int i = 0; i < outerArray.length - smallerArray.length + 1; ++i) {
+			boolean found = true;
+			for(int j = 0; j < smallerArray.length; ++j) {
+				if (outerArray[i + j] != smallerArray[j]) {
+					found = false;
+					break;
+				}
+			}
+			if (found) return i;
+		}
+		return -1;
 	}
 
 	public Header getHeader() {
